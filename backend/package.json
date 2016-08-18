@@ -1,0 +1,41 @@
+{
+  "name": "aws-sg-mngr-backend",
+  "version": "0.0.1",
+  "description": "Backend for AWS Security Group Management tool",
+  "main": "app.js",
+  "scripts": {
+  	"start": "node app.js",
+    "test": "mocha tests"
+  },
+  "author": "mkazin",
+  "license": "MIT",
+  "dependencies": {
+    "express": "4.x",
+    "pug": "0.1.x",
+    "mongoskin": "1.x",
+    "mongoose": "3.x",
+    "stylus": "0.x",
+    "express-generator": "^4.13.4"
+  },
+  "devDependencies": {
+  	"mocha": "1.x",
+  	"chai": "1.x",
+  	"expect.js": "0.x",
+  	"superagent": "x"
+  	},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mkazin/aws-sg-mngr"
+  },
+  "engines": {
+  	"node": ">=0.6.x"
+  },
+  "keywords": [
+    "aws",
+    "securitygroups"
+  ],
+  "bugs": {
+    "url": "https://github.com/mkazin/aws-sg-mngr/issues"
+  },
+  "homepage": "https://github.com/mkazin/aws-sg-mngr"
+}

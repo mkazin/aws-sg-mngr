@@ -1,0 +1,14 @@
+
+include ./includes/header
+
+mixin row(items)
+	tr
+		each item, index in items
+			td= item
+
+mixin table(tableData)
+	table
+		each row, index in tableData
+			+row(row)
+
+include ./includes/footer
