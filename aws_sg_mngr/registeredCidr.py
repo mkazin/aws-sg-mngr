@@ -33,12 +33,6 @@ class RegisteredCidr(object):
     def __str__(self):
         return "{} - {}".format(self.cidr, self.description)
 
-
     def __str__(self):
-        result = '{'
-        result += ' Description: "{}" '.format(self.description)
-        result += ', CIDR: "{}" '.format(self.cidr)
-        result += ', Owner: "{}" '.format(self.owner)
-        result += ', Expiration: "{}" '.format(self.expiration)
-        result += '}'
-        return result
+        return '{{Description: "{}", CIDR: "{}", Owner: "{}", Expiration: "{}"}}' \
+            .format(self.description, self.cidr, self.owner, self.expiration)

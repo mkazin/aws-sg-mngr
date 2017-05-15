@@ -27,14 +27,8 @@ class IngressRule(IpRule):
         self.to_port = to_port
 
     def __str__(self):
-        result = '{'
-        result += ' "Protocol": "{}" '.format(self.protocol)
-        result += ', "CIDR": "{}" '.format(self.cidr)
-        result += ', "FromPort": {} '.format(self.from_port)
-        result += ', "ToPort": {} '.format(self.to_port)
-        result += '}'
-        return result
-
+        return '{{Protocol: "{}", CIDR: "{}", FromPort: {}, ToPort: {}}}' \
+            .format(self.protocol, self.cidr, self.from_port, self.to_port)        
 
     # class Builder(object):
     #     def from
@@ -309,15 +303,11 @@ class AwsSecurityGroup(object):
         result += ' "Description": "{}" '.format(self.description)
         result += ', "GroupId": "{}" '.format(self.group_id)
         result += ', "GroupName": "{}" '.format(self.group_name)
-
-        # if len(self.ingress_rules) > 0:
-        result += ', "IngressRules": [{}] '.format(
-            ','.join(str(x) for x in self.ingress_rules))
-
-        # print 'Egress ({}): '.format(len(self.egress_rules)), str(self.egress_rules[0])
-        # if len(self.egress_rules) > 0:
-        result += ', "EgressRules": [{}] '.format(
-            ','.join(str(x) for x in self.egress_rules))
-
+        result += ', "IngressRules": [{}] '.format(__listjoin__(self.ingress_rules))
+        result += ', "EgressRules": [{}] '.format(__listjoin__(self.egress_rules))
         result += "}"
         return result
+
+
+def __listjoin__(the_list):
+    return ','.join(str(x) for x in the_list)
