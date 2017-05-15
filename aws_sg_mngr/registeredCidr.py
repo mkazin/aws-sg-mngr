@@ -7,7 +7,11 @@ class RegisteredCidr(object):
     DO_NOT_EXPIRE=0
 
     def __init__(self, cidr, description, owner=None, location=None, expiration=DO_NOT_EXPIRE):
-        self.cidr = cidr.decode('utf-8')
+        try:
+            self.cidr = cidr.decode('utf-8')
+        except AttributeError:
+            self.cidr= cidr
+
         self.description = description
         self.location = location
         self.owner = owner
@@ -37,3 +41,4 @@ class RegisteredCidr(object):
         result += ', Owner: "{}" '.format(self.owner)
         result += ', Expiration: "{}" '.format(self.expiration)
         result += '}'
+        return result

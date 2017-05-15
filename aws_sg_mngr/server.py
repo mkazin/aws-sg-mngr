@@ -1,10 +1,13 @@
 from flask import Flask
+from flask_restplus import Resource, Api
+from flast_restful_swagger import swagger
 from flask_restful import fields, marshal
 from registeredCidr import RegisteredCidr
 from awsSecurityGroup import AwsSecurityGroups
 import json
 import boto3
 from botocore.exceptions import NoCredentialsError
+import .marshaller
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -17,6 +20,14 @@ file_handler = RotatingFileHandler('flask.log', maxBytes=1024 * 1024 * 100, back
 file_handler.setLevel(logging.DEBUG)
 app.logger.addHandler(file_handler)
 
+# Set up the flast_restplus API
+# See http://michal.karzynski.pl/blog/2016/06/19/building-beautiful-restful-apis-using-flask-swagger-ui-flask-restplus/
+api = Api(app)
+
+# Set up Swagger Docs
+# See http://github.com/rantav/flask-restful-swagger
+# NOTE: this may not be needed. See if flask_restplus already provides this
+#api = swagger.docs(Api(app), apiVersion='0.1')
 
 CONFIG_FILE='server/config/boto.cfg'
 REGION = 'us-east-1'
@@ -60,83 +71,6 @@ def hello_world():
     
     #return json.dumps(groups)
 
-def find_mngr_sg(sgs, cidr):
-    for curr in sgs:
-        if curr.matches(cidr):
-            return curr
-    return None
-
-def merge_records(mngr_sgs, aws_sgs):
-    print '=========================================================='
-    print '==================== Merging here ========================'
-    print '=========================================================='
-    merged = []
-    print 'aws_sgs: ', aws_sgs
-    for aws_group in aws_sgs['SecurityGroups']:
-        print '=========================================================='
-        print 'aws_group: ', json.dumps(aws_group)
-
-
-        # Doc references for AWS Security Group:
-        # http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-groups.html
-        curr = {}
-        curr['GroupId'] = aws_group['GroupId']
-        curr['OwnerId'] = aws_group['OwnerId']
-        curr['GroupName'] = aws_group['GroupName']
-        curr['Rules'] = []
-
-        for permission in aws_group['IpPermissions']:
-            print 'permission: ', permission
-            base_rule = {}
-            base_rule['FromPort'] = permission['FromPort']
-            base_rule['ToPort'] = permission['ToPort']
-            base_rule['IpProtocol'] = permission['IpProtocol']
-
-            for cidr in permission['IpRanges']:
-                print 'cidr', cidr[u'CidrIp']
-                rule = base_rule
-                rule['CidrIp'] = cidr[u'CidrIp']
-
-                mngr_group = find_mngr_sg(mngr_sgs, cidr['CidrIp'])
-                #cidr_info = {}
-                if mngr_group is not None:
-                    print '!!!!!! matching mngr_group:', mngr_group
-                    rule['Owner'] = mngr_group.owner
-                    rule['Description'] = mngr_group.description
-                    curr['Rules'].append(rule)
-
-                #rule['CidrInfo'] = cidr_info
-        merged.append(curr)
-    print '\n=========================================================='
-    return merged
-
-
-
-def marshall_records(data):
-    # TODO: these should be constant, no need to build/allocate at runtime
-    #resource_fields = {'name': fields.String, 'first_names': fields.List(fields.String)}
-
-    rule_fields = {
-        'CidrIp': fields.String, 
-        'FromPort': fields.Integer, 
-        'ToPort': fields.Integer, 
-        'IpProtocol': fields.String
-    }
-
-    resource_fields = {
-        'GroupId': fields.String, 
-        'OwnerId': fields.String, 
-        'GroupName': fields.String,
-        'Rules': fields.List(fields.Nested(rule_fields))
-    }
-
-    merged_fields = fields.List(fields.Nested(resource_fields))
-
-    marshalled = marshal(data, merged_fields)
-    print "Marshalled: ", marshalled
-
-    return json.dumps(marshalled, sort_keys=True, indent=4, separators=(',', ': '))
-    #'{"first_names": ["Emile", "Raoul"], "name": "Bougnazal"}'
 
 
 @app.route('/testMerge')

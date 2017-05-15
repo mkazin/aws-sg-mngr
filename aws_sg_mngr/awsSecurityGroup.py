@@ -1,5 +1,7 @@
 import logging
 
+ALL_PROTOCOLS = '-1'
+
 class IpRule(object):
     def __init__(self, protocol, cidr):
         self.protocol = protocol
@@ -28,8 +30,8 @@ class IngressRule(IpRule):
         result = '{'
         result += ' "Protocol": "{}" '.format(self.protocol)
         result += ', "CIDR": "{}" '.format(self.cidr)
-        result += ', "FromPort": "{}" '.format(self.from_port)
-        result += ', "ToPort": "{}" '.format(self.to_port)
+        result += ', "FromPort": {} '.format(self.from_port)
+        result += ', "ToPort": {} '.format(self.to_port)
         result += '}'
         return result
 
@@ -122,8 +124,8 @@ class AwsSecurityGroups(object):
         response = client.describe_security_groups()
 
         if response['ResponseMetadata']['HTTPStatusCode'] != 200:
-            print 'Error getting SecurityGroup data from AWS:',
-            print response['ResponseMetadata']
+            print('Error getting SecurityGroup data from AWS:',)
+            print(response['ResponseMetadata'])
             return None
         
         for curr in response['SecurityGroups']:
