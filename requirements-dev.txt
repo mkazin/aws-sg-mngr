@@ -1,0 +1,4 @@
+pytest
+
+# Used to generate Swagger API documentation
+flask-restful-swagger

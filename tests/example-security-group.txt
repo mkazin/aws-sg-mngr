@@ -1,0 +1,108 @@
+{
+    "SecurityGroups": [
+        {
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1", 
+                    "PrefixListIds": [], 
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ], 
+                    "UserIdGroupPairs": [], 
+                    "Ipv6Ranges": []
+                }
+            ], 
+            "Description": "Created for Elasticsearch 2015-04-21T12:49:28.513-04:00", 
+            "Tags": [
+                {
+                    "Value": "Elasticsearch", 
+                    "Key": "Name"
+                }
+            ], 
+            "IpPermissions": [
+                {
+                    "PrefixListIds": [], 
+                    "FromPort": 22, 
+                    "IpRanges": [
+                        {
+                            "CidrIp": "209.6.205.245/32"
+                        }, 
+                        {
+                            "CidrIp": "96.95.188.89/32"
+                        }, 
+                        {
+                            "CidrIp": "108.20.118.134/32"
+                        }, 
+                        {
+                            "CidrIp": "209.6.37.244/32"
+                        }
+                    ], 
+                    "ToPort": 22, 
+                    "IpProtocol": "tcp", 
+                    "UserIdGroupPairs": [], 
+                    "Ipv6Ranges": []
+                }, 
+                {
+                    "PrefixListIds": [], 
+                    "FromPort": 5601, 
+                    "IpRanges": [
+                        {
+                            "CidrIp": "50.187.58.239/32"
+                        }, 
+                        {
+                            "CidrIp": "75.67.236.14/32"
+                        },
+                        {
+                            "CidrIp": "24.61.216.61/32"
+                        }
+                    ], 
+                    "ToPort": 5601, 
+                    "IpProtocol": "tcp", 
+                    "UserIdGroupPairs": [], 
+                    "Ipv6Ranges": []
+                }, 
+                {
+                    "PrefixListIds": [], 
+                    "FromPort": 9300, 
+                    "IpRanges": [], 
+                    "ToPort": 9300, 
+                    "IpProtocol": "tcp", 
+                    "UserIdGroupPairs": [
+                        {
+                            "UserId": "709761231924", 
+                            "GroupId": "sg-ebe1ac8f"
+                        }
+                    ], 
+                    "Ipv6Ranges": []
+                }, 
+                {
+                    "PrefixListIds": [], 
+                    "FromPort": 9200, 
+                    "IpRanges": [
+                        {
+                            "CidrIp": "50.187.58.239/32"
+                        }, 
+                        {
+                            "CidrIp": "75.67.236.14/32"
+                        }
+                    ], 
+                    "ToPort": 9200, 
+                    "IpProtocol": "tcp", 
+                    "UserIdGroupPairs": [
+                        {
+                            "UserId": "709761231924", 
+                            "GroupId": "sg-ebe1ac8f"
+                        }
+                    ], 
+                    "Ipv6Ranges": []
+                }
+            ], 
+            "GroupName": "Elasticsearch", 
+            "VpcId": "vpc-6453ed01", 
+            "OwnerId": "709761231924", 
+            "GroupId": "sg-ebe1ac8f"
+        }
+    ]
+}
