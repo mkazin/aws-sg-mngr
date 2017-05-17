@@ -22,8 +22,8 @@ class RegisteredCidr(object):
     def matches(self, other_cidr):
         # other_cidr = other_cidr.decode('utf-8')
 
-        if isinstance(other_cidr, self.cidr.__class__):
-            result =  self.cidr == other_cidr
+        if isinstance(other_cidr, self.__class__):
+            result =  self.cidr == other_cidr.cidr
         else:
             result = False
 
