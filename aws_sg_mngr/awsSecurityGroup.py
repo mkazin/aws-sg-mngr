@@ -13,11 +13,8 @@ class EgressRule(IpRule):
         IpRule.__init__(self, protocol, cidr)
 
     def __str__(self):
-        result = '{'
-        result += ' "Protocol": "{}" '.format(self.protocol)
-        result += ', "CIDR": "{}" '.format(self.cidr)
-        result += '}'
-        return result
+        return '{{"Protocol": "{}", "CIDR": "{}"}}' \
+            .format(self.protocol, self.cidr)        
 
 class IngressRule(IpRule):
 
@@ -27,83 +24,8 @@ class IngressRule(IpRule):
         self.to_port = to_port
 
     def __str__(self):
-        return '{{Protocol: "{}", CIDR: "{}", FromPort: {}, ToPort: {}}}' \
+        return '{{"Protocol": "{}", "CIDR": "{}", "FromPort": {}, "ToPort": {}}}' \
             .format(self.protocol, self.cidr, self.from_port, self.to_port)        
-
-    # class Builder(object):
-    #     def from
-
-
-    def authorize_egress(self, client):
-        pass
-        #   response = client.authorize_security_group_egress(
-        #       DryRun=TrueFalse,
-        #       GroupId='string',
-        #       SourceSecurityGroupName='string',
-        #       SourceSecurityGroupOwnerId='string',
-        #       IpProtocol='string',
-        #       FromPort=123,
-        #       ToPort=123,
-        #       CidrIp='string',
-        #       IpPermissions=[
-        #           {
-        #               'IpProtocol': 'string',
-        #               'FromPort': 123,
-        #               'ToPort': 123,
-        #               'UserIdGroupPairs': [
-        #                   {
-        #                       'UserId': 'string',
-        #                       'GroupName': 'string',
-        #                       'GroupId': 'string',
-        #                       'VpcId': 'string',
-        #                       'VpcPeeringConnectionId': 'string',
-        #                       'PeeringStatus': 'string'
-        #                   },
-        #               ],
-        #               'IpRanges': [
-        #                   {
-        #                       'CidrIp': 'string'
-        #                   },
-        #               ],
-        #               'Ipv6Ranges': [
-        #                   {
-        #                       'CidrIpv6': 'string'
-        #                   },
-        #               ],
-        #               'PrefixListIds': [
-        #                   {
-        #                       'PrefixListId': 'string'
-        #                   },
-        #                       'PrefixListId': 'string'
-        #                   },
-        #               ]
-        #           },
-        #       ]
-        #   )
-        # :type DryRun: boolean
-        # :param DryRun: 
-
-
-    def authorize_ingress(self, client):
-        pass
-        # authorize_security_group_ingress(self, *args, **kwargs)
-        #   .. _Amazon VPC Limits: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Appendix_Limits.html
-        #   .. _Protocol Numbers: http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
-
-
-
- # |  describe_security_group_references(self, *args, **kwargs)
- # |      [EC2-VPC only] Describes the VPCs on the other side of a VPC peering connection that are referencing the security groups you've specified in this request.
- # |      
- # |      
- # |      
- # |      See also: `AWS API Documentation <https://docs.aws.amazon.com/goto/WebAPI/ec2-2016-11-15/DescribeSecurityGroupReferences>`_
-
- # |  describe_security_groups(self, *args, **kwargs)
- # |      .. _Protocol Numbers: http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
- # |      .. _Security Groups for Your VPC: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_SecurityGroups.html
- # |      .. _Amazon EC2 Security Groups: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html
- # |      
 
 
 class AwsSecurityGroups(object):
@@ -129,10 +51,7 @@ class AwsSecurityGroups(object):
         return AwsSecurityGroups(result)
 
     def __str__(self):
-        result = '[ ' 
-        result += ' , '.join(str(x) for x in self.groups)
-        result += ' ]'
-        return result
+        return '[ {} ]'.format(' , '.join(str(x) for x in self.groups))
 
 
 class AwsSecurityGroup(object):
@@ -176,7 +95,6 @@ class AwsSecurityGroup(object):
             new_rule = EgressRule(protocol, cidr)
             self.data['EgressRules'].append(new_rule)
 
-    
         def withRuleList(self, builder_function, ip_permisisons_list):
             """ Helper function which allows the building of ingress & egress rules """
             for curr in ip_permisisons_list:
