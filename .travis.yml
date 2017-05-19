@@ -10,7 +10,9 @@ python:
   - "3.6"
 #  - "3.6-dev"
   - "nightly"
-install: "pip install -r requirements.txt -r requirements-dev.txt"
+install:
+- "pip install -r requirements.txt -r requirements-dev.txt codeclimate-test-reporter"
+- "pip install codeclimate-test-reporter"
 script: "python -m pytest"
 after_sucess:
   - CODECLIMATE_REPO_TOKEN=dc395b88a29f0db83400d9f2c05d94bf65dcbe009648cd55bb7cf34fec3083e3 codeclimate-test-reporter
