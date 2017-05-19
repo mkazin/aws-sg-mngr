@@ -1,6 +1,6 @@
 # Check out github.com/awslabs/chalice !!!!
 import boto3
-import awsSecurityGroup
+import aws_sg_mngr.awsSecurityGroup
 
 """
 TODO:
@@ -23,7 +23,7 @@ class Api(object):
        # aws_session_token=None, config=None):
 
     def get_security_groups(self):
-        return awsSecurityGroup.AwsSecurityGroups.from_boto(self.client)
+        return aws_sg_mngr.awsSecurityGroup.AwsSecurityGroups.from_boto(self.client)
 
     def authorize_egress(self):
         #   response = client.authorize_security_group_egress(
