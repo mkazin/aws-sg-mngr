@@ -13,10 +13,10 @@ python:
 install:
   - "pip install -r requirements.txt -r requirements-dev.txt"
   # coverage version held back due to warning: "This reporter is compatible with Coverage.py versions >=4.0,<4.4."
-  - "pip install coverage==4.3 pytest-cov codeclimate-test-reporter"
+  - "pip install codecov"
 script: 
   - "python -m pytest"
-  - "py.test --cov=aws_sg_mngr tests/"
+  - "py.test tests/ --cov"
 after_sucess:
-  - "codeclimate-test-reporter --token dc395b88a29f0db83400d9f2c05d94bf65dcbe009648cd55bb7cf34fec3083e3"
+  - codecov
 
