@@ -18,4 +18,4 @@ script:
 - "python -m pytest"
 - "py.test --cov=aws_sg_mngr tests/"
 after_sucess:
-  - CODECLIMATE_REPO_TOKEN=dc395b88a29f0db83400d9f2c05d94bf65dcbe009648cd55bb7cf34fec3083e3 codeclimate-test-reporter
+  - "CODECLIMATE_REPO_TOKEN=dc395b88a29f0db83400d9f2c05d94bf65dcbe009648cd55bb7cf34fec3083e3 codeclimate-test-reporter"
