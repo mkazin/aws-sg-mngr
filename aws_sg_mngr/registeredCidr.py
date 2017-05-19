@@ -4,34 +4,30 @@ class RegisteredCidr(object):
         to resolve the CIDR in an AWS Security Group
     """
 
-    DO_NOT_EXPIRE=0
+    DO_NOT_EXPIRE = 0
 
     def __init__(self, cidr, description, owner=None, location=None, expiration=DO_NOT_EXPIRE):
         try:
             self.cidr = cidr.decode('utf-8')
         except AttributeError:
-            self.cidr= cidr
+            self.cidr = cidr
 
         self.description = description
         self.location = location
         self.owner = owner
         self.expiration = expiration
-    
-
 
     def matches(self, other_cidr):
         # other_cidr = other_cidr.decode('utf-8')
 
         if isinstance(other_cidr, self.__class__):
-            result =  self.cidr == other_cidr.cidr
+            result = self.cidr == other_cidr.cidr
         else:
             result = False
 
-        # print 'comparing {} ({}) to {} ({}):: {}'.format(self.cidr, len(self.cidr), other_cidr, len(other_cidr), result)
+        # print 'comparing {} ({}) to {} ({}):: {}'.format(self.cidr,
+        # len(self.cidr), other_cidr, len(other_cidr), result)
         return result
-
-    def __str__(self):
-        return "{} - {}".format(self.cidr, self.description)
 
     def __str__(self):
         return '{{Description: "{}", CIDR: "{}", Owner: "{}", Expiration: "{}"}}' \

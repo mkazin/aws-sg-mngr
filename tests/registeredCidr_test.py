@@ -7,6 +7,7 @@ def test_matches():
 		'8.8.8.8/32', 'Simple CIDR', 'Google', 'Mountain View')
 
 	assert cidr_a.matches(cidr_a)
+	assert not cidr_a.matches("non sequitur")
 
 	cidr_b = registeredCidr.RegisteredCidr(
 		'8.8.8.8/32', 'Same CIDR, Different Object', 'Google', 'Mountain View')

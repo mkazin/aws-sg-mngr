@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = aws_sg_mngr
+
+[report]
+omit =
+	env3/*
