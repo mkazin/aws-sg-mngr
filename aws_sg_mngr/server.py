@@ -1,16 +1,18 @@
+import configparser
 from flask import Flask
 from flask_restplus import Resource, Api
-from flast_restful_swagger import swagger
+from flask_restful_swagger import swagger
 from flask_restful import fields, marshal
 from registeredCidr import RegisteredCidr
 from awsSecurityGroup import AwsSecurityGroups
 import json
 import boto3
 from botocore.exceptions import NoCredentialsError
-import .marshaller
-
+import marshaller
 import logging
 from logging.handlers import RotatingFileHandler
+
+import sqlite3
 
 # TODO: remove when I'm no longer setting environment variable for testing
 import os
@@ -29,8 +31,18 @@ api = Api(app)
 # NOTE: this may not be needed. See if flask_restplus already provides this
 #api = swagger.docs(Api(app), apiVersion='0.1')
 
-CONFIG_FILE='server/config/boto.cfg'
+CONFIG_FILE='aws_sg_mngr/config/boto.cfg'
 REGION = 'us-east-1'
+
+config = configparser.ConfigParser()
+config.read(CONFIG_FILE)
+print(','.join(str(x) for x in config.keys()))
+db_filename = config.get('DB', 'path')
+conn = sqlite3.connect(db_filename)
+
+@app.route('/securitygroups')
+def get_groups():
+    return str(api.securitygroups.query())
 
 @app.route('/')
 def hello_world():
@@ -46,9 +58,7 @@ def hello_world():
 
     mngr_records = [
         RegisteredCidr('209.6.205.245/32', 'Mike home', owner='mike', location='Somerville, MA', expiration=RegisteredCidr.DO_NOT_EXPIRE),
-        RegisteredCidr('96.95.188.89/32', 'LinkeDrive HQ', owner='mike', location='11 Elkins St. Boston, MA', expiration=RegisteredCidr.DO_NOT_EXPIRE)
-
-        # {'CidrIp': '209.6.205.245/32', 'Owner': 'mike', 'Description': 'Mike home', 'Location': 'Somerville, MA', 'DoNotDelete': True}
+        RegisteredCidr('96.95.188.89/32', 'Work', owner='mike', location='123 Summer St. Boston, MA', expiration=RegisteredCidr.DO_NOT_EXPIRE)
     ]
 #        mngr_cidr = next((x for x in mngr_sgs if x['CidrIp'] == curr['CidrIp']), None)
 #        cidr_info = {}
@@ -56,15 +66,9 @@ def hello_world():
 #            cidr_info['Owner'] = mngr_cidr['Owner']
 #            cidr_info['Description'] = mngr_cidr['Description']
 
-# Top of the CIDR spreadsheet...
-#Priority	CIDR	Location	Service	Owner	Comments	Old values
-#A	96.95.188.89/32	11 Elkins, Boston MA	(Mechanic Advisor)	LinkeDrive HQ	Should probably get a VPN set up
-#B	108.20.118.134/32 	Reading, MA		Hoyt home	please ask me before you delete
-#B	209.6.205.245/32	Somerville, MA	RCN	Mike Home	Do not delete
-#B	24.61.216.61/32			JD - unknown																								
 
     merged = merge_records(mngr_records, aws_groups)
-    print 'Merged:', merged
+    print('Merged: {}'.format(merged))
     marshalled = marshall_records(merged)
     return marshalled
     #json.dumps(marshalled, sort_keys=True, indent=4, separators=(',', ': '))
@@ -100,7 +104,7 @@ def test_boto():
 
     # response = client.describe_security_groups()
 
-    print groups
+    print(groups)
     return str(groups)
 
     # if response['ResponseMetadata']['HTTPStatusCode'] != 200:

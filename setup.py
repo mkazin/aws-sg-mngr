@@ -27,14 +27,15 @@ setup(
     version=version,
     author='Michael J. Kazin',
     author_email='mkazin@gmail.com',
-    url='',
+    url='http://github.com/mkazin/aws-sg-mngr',
     description='A short description for your project.',
     long_description=codecs.open('README.rst', 'rb', 'utf8').read(),
 
     # Classifiers (see https://pypi.python.org/pypi?%3Aaction=list_classifiers)
     classifiers=[
         'Development Status :: 3 - Alpha',
-        'Intended Audience :: Developers',
+        'Framework :: Flask',
+        'Intended Audience :: Information Technology',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
@@ -42,7 +43,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'Topic :: Software Development :: Libraries',
+        'Topic :: System :: Networking',
     ],
 
     # Packages and dependencies

@@ -3,7 +3,7 @@ Check out github.com/awslabs/chalice !!!!
 """
 TODO:
 - Create a database abstraction layer, as well as a Redis (Elasticache) implementation
-  (for use at LinkeDrive, I need to figure out something else for my personal AWS account)
+  (for use at work, I need to figure out something else for my personal AWS account)
 - Consider other persistence methods and create issues tagged "help wanted" 
   See: https://sc5.io/posts/amazon-aws-lambda-data-caching-solutions-compared/#gref
   

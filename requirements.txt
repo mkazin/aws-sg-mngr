@@ -1,3 +1,8 @@
 boto3
+ConfigParser
 flask
 flask_restful
+flask_restplus
+
+# Note: sqlite3 is presumed to be available. It may not be installed from pypi
+
