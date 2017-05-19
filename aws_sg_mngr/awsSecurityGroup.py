@@ -1,11 +1,12 @@
-import logging
-
 ALL_PROTOCOLS = '-1'
 
+
 class IpRule(object):
+
     def __init__(self, protocol, cidr):
         self.protocol = protocol
         self.cidr = cidr
+
 
 class EgressRule(IpRule):
 
@@ -14,7 +15,8 @@ class EgressRule(IpRule):
 
     def __str__(self):
         return '{{"Protocol": "{}", "CIDR": "{}"}}' \
-            .format(self.protocol, self.cidr)        
+            .format(self.protocol, self.cidr)
+
 
 class IngressRule(IpRule):
 
@@ -25,7 +27,7 @@ class IngressRule(IpRule):
 
     def __str__(self):
         return '{{"Protocol": "{}", "CIDR": "{}", "FromPort": {}, "ToPort": {}}}' \
-            .format(self.protocol, self.cidr, self.from_port, self.to_port)        
+            .format(self.protocol, self.cidr, self.from_port, self.to_port)
 
 
 class AwsSecurityGroups(object):
@@ -43,7 +45,7 @@ class AwsSecurityGroups(object):
             print('Error getting SecurityGroup data from AWS:',)
             print(response['ResponseMetadata'])
             return None
-        
+
         for curr in response['SecurityGroups']:
             group = AwsSecurityGroup.Builder._from_SecurityGroups_item_(curr).build()
             result.append(group)
@@ -76,7 +78,7 @@ class AwsSecurityGroup(object):
             self.data['GroupId'] = group_id
 
         def withOwnerId(self, owner_id):
-            self.data['OwnerId'] = owner_id            
+            self.data['OwnerId'] = owner_id
 
         def withGroupName(self, group_name):
             self.data['GroupName'] = group_name
@@ -114,7 +116,6 @@ class AwsSecurityGroup(object):
                     cidr = curr_cidr['CidrIp']
                     builder_function(protocol, from_port, to_port, cidr)
 
-
         @staticmethod
         def _from_SecurityGroups_item_(group):
             """ Creates a builder of a list of groups as returned from
@@ -146,10 +147,8 @@ class AwsSecurityGroup(object):
             except KeyError:
                 builder.withTags([])
 
-
             egress_list = group['IpPermissionsEgress']
             builder.withRuleList(builder.withEgressRule, egress_list)
-
 
             # for curr_egress in egress_list:
             #     from_port = curr_egress['FromPort']
@@ -174,9 +173,7 @@ class AwsSecurityGroup(object):
             #         curr_range['CidrIp']
             #     curr_permission[]
 
-
             # curr = {}
-
 
             # for permission in aws_group['IpPermissions']:
             #     print 'permission: ', permission
@@ -200,14 +197,11 @@ class AwsSecurityGroup(object):
 
             return builder
 
-
-
         # def from_boto(client):
         #     client.describe_security_groups(self, *args, **kwargs)
         #   .. _Protocol Numbers: http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
         #   .. _Security Groups for Your VPC: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_SecurityGroups.html
         #   .. _Amazon EC2 Security Groups: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html
-
 
     def __init__(self, group_id, group_name, description, ingress_rules, egress_rules):
         self.group_id = group_id
