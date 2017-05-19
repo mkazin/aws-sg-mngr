@@ -1,7 +1,8 @@
 # aws-sg-mngr - AWS SecurityGroup Manager
 
-.. image:: https://travis-ci.org/mkazin/aws-sg-mngr.svg?branch=master
-    :target: https://travis-ci.org/mkazin/aws-sg-mngr
+[![Build Status](https://travis-ci.org/mkazin/aws-sg-mngr.svg?branch=master)](https://travis-ci.org/mkazin/aws-sg-mngr)
+[![Code Climate](https://codeclimate.com/github/mkazin/aws-sg-mngr/badges/gpa.svg)](https://codeclimate.com/github/24pullrequests/contribulator)
+[![Test Coverage](https://codeclimate.com/github/mkazin/aws-sg-mngr/badges/coverage.svg)](https://codeclimate.com/github/24pullrequests/contribulator/coverage)
 
 A somewhat-more sane interface to AWS Security Groups.
 
