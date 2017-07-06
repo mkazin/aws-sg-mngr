@@ -1,7 +1,3 @@
-# TODO: Consider using this built-in class instead of strings. This would simplify error handling
-# it also provides us with compare functionality like "contains()" and superset() function to simplify storage
-from ipaddress import IPv4Network
-
 
 class RegisteredCidr(object):
     """ Describes a registered CIDR, which provides the needed information
@@ -10,7 +6,9 @@ class RegisteredCidr(object):
 
     DO_NOT_EXPIRE = 0
 
-    def __init__(self, cidr, description, owner=None, location=None, expiration=DO_NOT_EXPIRE):
+    def __init__(
+            self, cidr, description,
+            owner=None, location=None, expiration=DO_NOT_EXPIRE):
         try:
             self.cidr = cidr.decode('utf-8')
         except AttributeError:
