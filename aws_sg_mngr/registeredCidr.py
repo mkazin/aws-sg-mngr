@@ -1,3 +1,7 @@
+# TODO: Consider using this built-in class instead of strings. This would simplify error handling
+# it also provides us with compare functionality like "contains()" and superset() function to simplify storage
+from ipaddress import IPv4Network
+
 
 class RegisteredCidr(object):
     """ Describes a registered CIDR, which provides the needed information
