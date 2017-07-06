@@ -20,6 +20,6 @@ script:
   - "python -m pytest"
   - "py.test --cov=./ tests/"
 after_sucess:
-  - CODECLIMATE_REPO_TOKEN=$CODECLIMATE_REPO_TOKEN codeclimate-test-reporter
+  - codeclimate-test-reporter --token $CODECLIMATE_REPO_TOKEN
   - codecov --token=$CODECOV_TOKEN
 
