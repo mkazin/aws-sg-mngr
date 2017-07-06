@@ -27,10 +27,10 @@ class RegisteredCidr(object):
         else:
             result = False
 
-        # print 'comparing {} ({}) to {} ({}):: {}'.format(self.cidr,
+        # print 'comparing {0} ({1}) to {2} ({3}):: {4}'.format(self.cidr,
         # len(self.cidr), other_cidr, len(other_cidr), result)
         return result
 
     def __str__(self):
-        return '{{Description: "{}", CIDR: "{}", Owner: "{}", Expiration: "{}"}}' \
+        return '{{Description: "{0}", CIDR: "{1}", Owner: "{2}", Expiration: "{3}"}}' \
             .format(self.description, self.cidr, self.owner, self.expiration)

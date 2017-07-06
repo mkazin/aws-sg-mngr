@@ -19,8 +19,8 @@ def test_deserialize():
 
     group_data = security_groups_response["SecurityGroups"][0]
 
-    builder = awsSecurityGroup.AwsSecurityGroup.Builder._from_SecurityGroups_item_(group_data)
-    sg = builder.build()
+    sg = awsSecurityGroup.AwsSecurityGroup.Builder._from_SecurityGroups_item_(
+        group_data).build()
 
     assert sg is not None
     assert 'Created for Elasticsearch' in sg.description
@@ -28,9 +28,9 @@ def test_deserialize():
     assert sg.group_name == 'Elasticsearch'
 
     # for rule in sg.egress_rules:
-    #     print("- Egress rule: {}".format(str(rule)))
+    #     print("- Egress rule: {0}".format(str(rule)))
     # for rule in sg.ingress_rules:
-    #     print("+ Ingress rule: {}".format(str(rule)))
+    #     print("+ Ingress rule: {0}".format(str(rule)))
 
     assert len(sg.egress_rules) == 1
     assert sg.egress_rules[0].protocol == awsSecurityGroup.ALL_PROTOCOLS

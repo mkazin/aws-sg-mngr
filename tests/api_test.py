@@ -37,9 +37,9 @@ def test_get_security_groups():
     assert sg.group_name == 'Elasticsearch'
 
     # for rule in sg.egress_rules:
-    #     print("- Egress rule: {}".format(str(rule)))
+    #     print("- Egress rule: {0}".format(str(rule)))
     # for rule in sg.ingress_rules:
-    #     print("+ Ingress rule: {}".format(str(rule)))
+    #     print("+ Ingress rule: {0}".format(str(rule)))
 
     assert len(sg.egress_rules) == 1
     assert sg.egress_rules[0].protocol == awsSecurityGroup.ALL_PROTOCOLS
@@ -51,7 +51,8 @@ def test_get_security_groups():
     assert sg.ingress_rules[0].from_port == 22
     assert sg.ingress_rules[0].to_port == 22
 
-    my_cidr = registeredCidr.RegisteredCidr("192.168.0.42/32", "Test CIDR", owner="AWS-SG-MNGR", location="/tests/")
+    my_cidr = registeredCidr.RegisteredCidr(
+        "192.168.0.42/32", "Test CIDR", owner="AWS-SG-MNGR", location="/tests/")
 
     new_ingress_rule = awsSecurityGroup.IngressRule('tcp', '22', '22', my_cidr)
 

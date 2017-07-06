@@ -14,7 +14,7 @@ class EgressRule(IpRule):
         IpRule.__init__(self, protocol, cidr)
 
     def __str__(self):
-        return '{{"Protocol": "{}", "CIDR": "{}"}}' \
+        return '{{"Protocol": "{0}", "CIDR": "{1}"}}' \
             .format(self.protocol, self.cidr)
 
 
@@ -26,7 +26,7 @@ class IngressRule(IpRule):
         self.to_port = to_port
 
     def __str__(self):
-        return '{{"Protocol": "{}", "CIDR": "{}", "FromPort": {}, "ToPort": {}}}' \
+        return '{{"Protocol": "{0}", "CIDR": "{1}", "FromPort": {2}, "ToPort": {3}}}' \
             .format(self.protocol, self.cidr, self.from_port, self.to_port)
 
 
@@ -53,7 +53,7 @@ class AwsSecurityGroups(object):
         return AwsSecurityGroups(result)
 
     def __str__(self):
-        return '[ {} ]'.format(' , '.join(str(x) for x in self.groups))
+        return '[ {0} ]'.format(' , '.join(str(x) for x in self.groups))
 
 
 class AwsSecurityGroup(object):
@@ -66,7 +66,7 @@ class AwsSecurityGroup(object):
             self.data['EgressRules'] = []
 
         def build(self):
-            # print 'Building AwsSecurityGroup with {}'.format(self.data)
+            # print 'Building AwsSecurityGroup with {0}'.format(self.data)
             return AwsSecurityGroup(
                 self.data['GroupId'],
                 self.data['GroupName'],
@@ -212,11 +212,11 @@ class AwsSecurityGroup(object):
 
     def __str__(self):
         result = '{'
-        result += ' "Description": "{}" '.format(self.description)
-        result += ', "GroupId": "{}" '.format(self.group_id)
-        result += ', "GroupName": "{}" '.format(self.group_name)
-        result += ', "IngressRules": [{}] '.format(__listjoin__(self.ingress_rules))
-        result += ', "EgressRules": [{}] '.format(__listjoin__(self.egress_rules))
+        result += ' "Description": "{0}" '.format(self.description)
+        result += ', "GroupId": "{0}" '.format(self.group_id)
+        result += ', "GroupName": "{0}" '.format(self.group_name)
+        result += ', "IngressRules": [{0}] '.format(__listjoin__(self.ingress_rules))
+        result += ', "EgressRules": [{0}] '.format(__listjoin__(self.egress_rules))
         result += "}"
         return result
 
