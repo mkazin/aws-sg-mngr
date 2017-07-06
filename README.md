@@ -4,6 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/mkazin/aws-sg-mngr/badges/gpa.svg)](https://codeclimate.com/github/mkazin/aws-sg-mngr)
 [![Test Coverage](https://codeclimate.com/github/mkazin/aws-sg-mngr/badges/coverage.svg)](https://codeclimate.com/github/mkazin/aws-sg-mngr/coverage)
 [![codecov](https://codecov.io/gh/mkazin/aws-sg-mngr/branch/master/graph/badge.svg)](https://codecov.io/gh/mkazin/aws-sg-mngr)
+[![Documentation Status](https://readthedocs.org/projects/aws-sg-mngr/badge/?version=latest)](http://aws-sg-mngr.readthedocs.io/en/latest/?badge=latest)
 
 A somewhat-more sane interface to AWS Security Groups.
 

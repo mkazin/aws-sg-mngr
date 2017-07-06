@@ -1,16 +1,17 @@
 # Check out github.com/awslabs/chalice !!!!
 import boto3
-import aws_sg_mngr.awsSecurityGroup
+from aws_sg_mngr import awsSecurityGroup as sg
 
 """
 TODO:
-- Create a ~~~database abstraction layer, as well as a Redis (Elasticache) implementation~~~~ 
-    no! Use a microservice!
+- Create a ~~~database abstraction layer, as well as a Redis (Elasticache)
+  implementation~~~~  no! Use a microservice!
   (for use at work, I need to figure out something else for my personal AWS account)
 - Consider other persistence methods and create issues tagged "help wanted"
   See: https://sc5.io/posts/amazon-aws-lambda-data-caching-solutions-compared/#gref
 
-- Also note Free Tier: DynamoDb 25GB on the permanent free tier (problem is, it's the slowest option)
+- Also note Free Tier: DynamoDb 25GB on the permanent free tier (problem is, it's the
+  slowest option)
   https://aws.amazon.com/s/dm/optimization/server-side-test/free-tier/free_np/
 
 """
@@ -20,11 +21,11 @@ class Api(object):
 
     def __init__(self, region):
         self.client = boto3.client(service_name='ec2', region_name=region)
-       # aws_access_key_id=None, aws_secret_access_key=None,
-       # aws_session_token=None, config=None):
+        # aws_access_key_id=None, aws_secret_access_key=None,
+        # aws_session_token=None, config=None):
 
-    def get_security_groups(self):
-        return aws_sg_mngr.awsSecurityGroup.AwsSecurityGroups.from_boto(self.client)
+    def get_security_groups(self, group_ids=None):
+        return sg.AwsSecurityGroups.from_boto(self.client, group_ids=group_ids)
 
     def authorize_egress(self):
         #   response = client.authorize_security_group_egress(
@@ -83,12 +84,22 @@ class Api(object):
         result = []
         response = self.client.authorize_security_group_ingress(
             # GroupName  # [EC2-Classic, default VPC] The name of the security group.
-            IpProtocol=ingress_rule.protocol,  # The IP protocol name (tcp, udp, icmp) or number (see Protocol Numbers). (VPC only) Use -1 to specify all protocols. If you specify -1, or a protocol number other than tcp, udp, icmp, or 58 (ICMPv6), traffic on all ports is allowed, regardless of any ports you specify. For tcp, udp, and icmp, you must specify a port range. For protocol 58 (ICMPv6), you can optionally specify a port range; if you don't, traffic for all types and codes is allowed.
+            # The IP protocol name (tcp, udp, icmp) or number (see Protocol Numbers).
+            # (VPC only) Use -1 to specify all protocols. If you specify -1, or a
+            # protocol number other than tcp, udp, icmp, or 58 (ICMPv6), traffic on
+            # all ports is allowed, regardless of any ports you specify. For tcp, udp,
+            # and icmp, you must specify a port range. For protocol 58 (ICMPv6), you
+            # can optionally specify a port range; if you don't, traffic for all types
+            # and codes is allowed.
+            IpProtocol=ingress_rule.protocol,
             CidrIp=ingress_rule.cidr,
             FromPort=ingress_rule.from_port,
+            # The end of port range for the TCP and UDP protocols, or an ICMP/ICMPv6 code
+            # number. For the ICMP/ICMPv6 code number, use -1 to specify all codes.
             ToPort=ingress_rule.to_port,
-            GroupId=security_group.group_id  # The ID of the security group. Required for a nondefault VPC.
-            )  # The end of port range for the TCP and UDP protocols, or an ICMP/ICMPv6 code number. For the ICMP/ICMPv6 code number, use -1 to specify all codes.
+            # The ID of the security group. Required for a nondefault VPC.
+            GroupId=security_group.group_id
+        )
 
 # IpPermissions.N
 # A set of IP permissions. Can be used to specify multiple rules in a single command.
@@ -107,14 +118,13 @@ class Api(object):
 # Type: String
 # Required: No
 
-        print(response);
+        print(response)
         # if response['ResponseMetadata']['HTTPStatusCode'] != 200:
         #     print('Error authorizing ingress from AWS:',)
         #     print(response['ResponseMetadata'])
         #     return None
 
         # TODO: ensure registered CIDR is recorded in DB?
-
 
         # for curr in response['SecurityGroups']:
         #     group = AwsSecurityGroup.Builder._from_SecurityGroups_item_(curr).build()

@@ -36,10 +36,10 @@ class AwsSecurityGroups(object):
         self.groups = groups
 
     @staticmethod
-    def from_boto(client):
+    def from_boto(client, group_ids=None):
 
         result = []
-        response = client.describe_security_groups()
+        response = client.describe_security_groups(GroupIds=group_ids)
 
         if response['ResponseMetadata']['HTTPStatusCode'] != 200:
             print('Error getting SecurityGroup data from AWS:',)

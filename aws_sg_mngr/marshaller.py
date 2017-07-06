@@ -77,15 +77,15 @@ class Marshaller(object):
     def _marshall_records_(data):
         """
         Rule ==> {
-            'CidrIp': fields.String, 
-            'FromPort': fields.Integer, 
-            'ToPort': fields.Integer, 
+            'CidrIp': fields.String,
+            'FromPort': fields.Integer,
+            'ToPort': fields.Integer,
             'IpProtocol': fields.String
         }
 
         Resource ==> {
-            'GroupId': fields.String, 
-            'OwnerId': fields.String, 
+            'GroupId': fields.String,
+            'OwnerId': fields.String,
             'GroupName': fields.String,
             'Rules': fields.List(fields.Nested(Rule))
         }
@@ -112,12 +112,12 @@ class Marshaller(object):
         # merged_fields = fields.List(fields.Nested(resource_fields))
         merged_fields = {'Rules': fields.List(fields.Nested(resource_fields))}
 
-        print('data: '.format(data))
+        print('data: {0}'.format(data))
         marshalled = marshal(data, merged_fields)
-        print("Marshalled: ".format(marshalled))
+        print("Marshalled: {0}".format(marshalled))
 
         return json.dumps(marshalled, sort_keys=True, indent=4, separators=(',', ': '))
-        #'{"first_names": ["Emile", "Raoul"], "name": "Bougnazal"}'
+        # '{"first_names": ["Emile", "Raoul"], "name": "Bougnazal"}'
 
 
 def find_mngr_sg(sgs, cidr):
