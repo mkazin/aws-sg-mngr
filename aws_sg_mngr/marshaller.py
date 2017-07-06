@@ -16,16 +16,21 @@ class Marshaller(object):
         print('==========================================================')
         result = []
 
+        if type(aws_sgs) == list:
+            groups = aws_sgs
+        else:
+            groups = aws_sgs.groups
+
         print("Merging aws_sgs:")
-        # print("\n- ".join(str(x)) for x in aws_sgs)
-        # print('\n - '.join(str(x) for x in aws_sgs))
-        print('\n'.join('\t- {}'.format(str(x)) for x in aws_sgs))
+        # print("\n- ".join(str(x)) for x in groups)
+        # print('\n - '.join(str(x) for x in groups))
+        print('\n'.join('\t- {}'.format(str(x)) for x in groups))
 
         print("With mngr_sgs:")
         # print("- {}\n".format(str(x)) for x in mngr_sgs)
         print('\n'.join('\t- {}'.format(str(x)) for x in mngr_sgs))
 
-        for aws_group in aws_sgs:
+        for aws_group in groups:
             print('==========================================================')
             print('\n\t\t- Current aws_group: {}'.format(aws_group))
 
@@ -39,7 +44,7 @@ class Marshaller(object):
             merged_rule['Rules'] = []
 
             for curr_rule in aws_group.egress_rules + aws_group.ingress_rules:
-                print('\t\t\t- Current rule: {}'.format(curr_rule))
+                # print('\t\t\t- Current rule: {}'.format(curr_rule))
                 base_rule = {}
 
                 base_rule['IpProtocol'] = curr_rule.protocol
@@ -59,7 +64,9 @@ class Marshaller(object):
                 mngr_group = find_mngr_sg(mngr_sgs, curr_rule.cidr)
                 #cidr_info = {}
                 if mngr_group is not None:
-                    print('\t\t\t matching mngr_group: {}'.format(mngr_group))
+                    print('\t\t\t Found matching mngr_group: {}'.format(mngr_group))
+                    print('\t\t\t\t for current rule: {}'.format(curr_rule))
+
                     rule['Owner'] = mngr_group.owner
                     rule['Description'] = mngr_group.description
                     merged_rule['Rules'].append(rule)
@@ -94,7 +101,9 @@ class Marshaller(object):
             'CidrIp': fields.String, 
             'FromPort': fields.Integer, 
             'ToPort': fields.Integer, 
-            'IpProtocol': fields.String
+            'IpProtocol': fields.String,
+            'Owner': fields.String,
+            'Descripion': fields.String
         }
 
         resource_fields = {
@@ -104,8 +113,10 @@ class Marshaller(object):
             'Rules': fields.List(fields.Nested(rule_fields))
         }
 
-        merged_fields = fields.List(fields.Nested(resource_fields))
+        # merged_fields = fields.List(fields.Nested(resource_fields))
+        merged_fields = {'Rules': fields.List(fields.Nested(resource_fields))}
 
+        print('data: '.format(data))
         marshalled = marshal(data, merged_fields)
         print("Marshalled: ".format(marshalled))
 
@@ -115,6 +126,7 @@ class Marshaller(object):
 
 def find_mngr_sg(sgs, cidr):
     for curr in sgs:
-        if curr.matches(cidr):
+        # print('Comparing {} to {}'.format(curr.cidr, cidr))
+        if curr.cidr == cidr:
             return curr
     return None

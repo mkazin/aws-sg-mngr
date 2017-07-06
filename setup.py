@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 # Save version and author to __meta__.py
 version = open('VERSION').read().strip()
 dirname = os.path.dirname(__file__)
-path = os.path.join(dirname, 'src', 'aws_sg_mngr', '__meta__.py')
+path = os.path.join(dirname, 'aws_sg_mngr', '__meta__.py')
 meta = '''# Automatically created. Please do not edit.
 __version__ = '%s'
 __author__ = u'Michael J. Kazin'
@@ -47,8 +47,8 @@ setup(
     ],
 
     # Packages and dependencies
-    package_dir={'': 'src'},
-    packages=find_packages('src'),
+    package_dir={'aws_sg_mngr': 'aws_sg_mngr'},
+    packages=find_packages('aws_sg_mngr'),
     install_requires=[
     ],
     extras_require={
