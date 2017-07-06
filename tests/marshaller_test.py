@@ -12,9 +12,9 @@ def test_merge():
     print('========= test_merge =========')
     cidrs = get_registered_cidrs()
 
-    print('cidrs: {}'.format(','.join(str(x) for x in cidrs)))
+    print('cidrs: {0}'.format(','.join(str(x) for x in cidrs)))
     sgs = [get_test_sg()]
-    print('sgs: {}'.format(str(sgs[0])))
+    print('sgs: {0}'.format(str(sgs[0])))
 
     data = Marshaller.merge_records(cidrs, sgs)
 
@@ -76,17 +76,17 @@ def test_marshalling():
     cidrs = get_registered_cidrs()
 
     print('******* MERGING ************')
-    print('1) cidrs: {}'.format(','.join(str(x) for x in cidrs)))
+    print('1) cidrs: {0}'.format(','.join(str(x) for x in cidrs)))
     sgs = [get_test_sg()]
-    print('2) sgs: {}'.format(str(sgs[0])))
+    print('2) sgs: {0}'.format(str(sgs[0])))
 
     data = Marshaller.merge_records(cidrs, sgs)
 
     print('******* OUTPUT ************')
-    print('data: {}'.format(data))
+    print('data: {0}'.format(data))
     result = Marshaller._marshall_records_(data)
 
-    print('result: {}'. format(result))
+    print('result: {0}'. format(result))
     assert hasattr(result, 'rules')
 
     # rule_fields = {
