@@ -39,7 +39,10 @@ class AwsSecurityGroups(object):
     def from_boto(client, group_ids=None):
 
         result = []
-        response = client.describe_security_groups(GroupIds=group_ids)
+        if group_ids is None:
+            response = client.describe_security_groups()
+        else:
+            response = client.describe_security_groups(GroupIds=group_ids)
 
         if response['ResponseMetadata']['HTTPStatusCode'] != 200:
             print('Error getting SecurityGroup data from AWS:',)

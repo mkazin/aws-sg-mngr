@@ -5,6 +5,7 @@ class RegisteredCidr(object):
     """
 
     DO_NOT_EXPIRE = 0
+    ALL_PROTOCOLS = -1
 
     def __init__(
             self, cidr, description,
