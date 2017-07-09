@@ -17,7 +17,8 @@ install:
   - "pip install codecov"
   - "pip install pytest-cov"
 script: 
-  - "python -m pytest"
+#  - "python -m pytest"
+  - "pytest tests/"
   - "py.test --cov=aws_sg_mngr/ tests/"
 after_sucess:
   - codeclimate-test-reporter --token $CODECLIMATE_REPO_TOKEN
