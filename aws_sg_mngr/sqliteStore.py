@@ -7,15 +7,15 @@ import sqlite3
 class SqliteStore(CidrStore):
 
     def __init__(self, config, logger=None):
+        self.db_conn = None
         # TODO: how does this file be packaged?
         self.CREATE_SCHEMA_FILE = 'config/cidrs_schema.sql'
         self.db_filename = config.get('DB', 'path')
         # self.schema_file = config.get('DB', 'schema_path')
-        self.db_conn = None
         self.__init_db__()
 
     def __del__(self):
-        if self.db_conn:
+        if self.db_conn is not None:
             self.db_conn.close()
             self.db_conn = None
 
