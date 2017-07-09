@@ -35,6 +35,7 @@ class Marshaller(object):
             # http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-groups.html
             merged_rule = {}
             merged_rule['GroupId'] = aws_group.group_id
+            merged_rule['Description'] = aws_group.description
             # merged_rule['OwnerId'] = aws_group.owner_id
             merged_rule['GroupName'] = aws_group.group_name
             merged_rule['Rules'] = []
@@ -65,9 +66,10 @@ class Marshaller(object):
 
                     rule['Owner'] = mngr_group.owner
                     rule['Description'] = mngr_group.description
-                    merged_rule['Rules'].append(rule)
 
-                    # rule['CidrInfo'] = cidr_info
+                merged_rule['Rules'].append(rule)
+
+                # rule['CidrInfo'] = cidr_info
             print('\t\t merged_rule: {0}'.format(merged_rule))
             result.append(merged_rule)
         print('\n==========================================================')

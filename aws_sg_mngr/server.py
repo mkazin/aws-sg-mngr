@@ -1,29 +1,31 @@
 import configparser
 from flask import Flask, Blueprint
 from flask_restplus import Resource, Api
-from flask_restful_swagger import swagger
+# from flask_restful_swagger import swagger
 from flask_restful import fields, marshal
 
 from aws_sg_mngr.registeredCidr import RegisteredCidr
 from aws_sg_mngr.awsSecurityGroup import AwsSecurityGroups
 from aws_sg_mngr.marshaller import Marshaller
 from aws_sg_mngr import api as mngr_api
+from aws_sg_mngr.sqliteStore import SqliteStore
 
-# import registeredCidr
 import json
 import boto3
 from botocore.exceptions import NoCredentialsError
-# import marshaller
+
 import logging
 from logging.handlers import RotatingFileHandler
-import sqlite3
 
 # TODO: remove when I'm no longer setting environment variable for testing
 import os
 
+CONFIG_FILE = 'aws_sg_mngr/config/boto.cfg'
+REGION = 'us-east-1'
 
 app = Flask(__name__)
 api = Api(app)
+
 # sgs_namespace = api.namespace(
 #     'groups', description='Operations related to security groups')
 # cidrs_namespace = api.namespace(
@@ -36,6 +38,8 @@ def initialize_app():
         'flask.log', maxBytes=1024 * 1024 * 100, backupCount=3)
     file_handler.setLevel(logging.DEBUG)
     app.logger.addHandler(file_handler)
+
+    initialize_db()
 
     # Set up the flast_restplus API
     # See
@@ -52,19 +56,16 @@ def initialize_app():
 # Set up Swagger Docs
 # See http://github.com/rantav/flask-restful-swagger
 # NOTE: this may not be needed. See if flask_restplus already provides this
-#api = swagger.docs(Api(app), apiVersion='0.1')
-
-CONFIG_FILE = 'aws_sg_mngr/config/boto.cfg'
-REGION = 'us-east-1'
-
-config = configparser.ConfigParser()
-config.read(CONFIG_FILE)
-print(','.join(str(x) for x in config.keys()))
-db_filename = config.get('DB', 'path')
-conn = sqlite3.connect(db_filename)
+# api = swagger.docs(Api(app), apiVersion='0.1')
 
 
-# @sgs_namespace.route('/')
+def initialize_db():
+
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILE)
+    app.store = SqliteStore(config)
+
+
 @api.route('/api/groups')
 # Consider using flask_restful.marshal_with_fields - see:
 #    http://stackoverflow.com/questions/22645029
@@ -75,7 +76,8 @@ class SecurityGroupsCollection(Resource):
         mngr = mngr_api.Api(REGION)
         aws_groups = mngr.get_security_groups()
 
-        cidrs = get_registered_cidrs()  # TODO: replace with persistence
+        print(aws_groups)
+        cidrs = query_registered_cidrs()  # TODO: replace with persistence
         data = Marshaller.merge_records(cidrs, aws_groups)
 
         return data
@@ -102,21 +104,16 @@ class SecurityGroup(Resource):
         mngr = mngr_api.Api(REGION)
         aws_groups = mngr.get_security_groups(group_ids=[group_id])
 
-        cidrs = get_registered_cidrs()  # TODO: replace with persistence
+        cidrs = query_registered_cidrs()
         data = Marshaller.merge_records(cidrs, aws_groups)
 
         return data
 
 
-def get_registered_cidrs():
-    cidrs = []
-    # TODO: test expiration:: , expiration=DO_NOT_EXPIRE))
-    cidrs.append(RegisteredCidr(
-        "209.6.37.244/32", "Home", owner="mjkazin", location="Home"))
-    cidrs.append(RegisteredCidr(
-        "75.67.236.14/32", "Company HQ", owner="mjkazin",
-        location="Office"))  # TODO: test expiration:: , expiration=DO_NOT_EXPIRE))
-    return cidrs
+def query_registered_cidrs():
+
+    # TODO: test for expiration? , expiration=DO_NOT_EXPIRE))
+    return app.store.query_all()
 
 
 # @cidrs_namespace.route('/')
@@ -131,50 +128,53 @@ class SecurityGroupRule(Resource):
         return None, 201
 
 
-@app.route('/')
-def hello_world():
-    # return 'Hello, World!'
+@api.route('/api/rules/<string:group_id>')
+class SecurityGroupRule(Resource):
 
-    # Merge our data into AWS' .  For more see:
-    #   https://flask-restful.readthedocs.io/en/0.3.5/fields.html#complex-structures
+    def post(self, group_id):
 
-    with open('server/example-security-group.txt', 'r') as stub_group:
-        aws_groups = json.load(stub_group)
+        parts = group_id.split('-')
+        assert parts[0] == 'sg'
 
-    mngr_records = [
-        RegisteredCidr('209.6.205.245/32', 'Mike home', owner='mike',
-                       location='Somerville, MA',
-                       expiration=RegisteredCidr.DO_NOT_EXPIRE),
-        RegisteredCidr('96.95.188.89/32', 'Work', owner='mike',
-                       location='123 Summer St. Boston, MA',
-                       expiration=RegisteredCidr.DO_NOT_EXPIRE)
-    ]
-#        mngr_cidr = next((x for x in mngr_sgs if x['CidrIp'] == curr['CidrIp']), None)
-#        cidr_info = {}
-#        if mngr_group is not None:
-#            cidr_info['Owner'] = mngr_cidr['Owner']
-#            cidr_info['Description'] = mngr_cidr['Description']
+        post_body = json.loads(request.data)
 
-    merged = merge_records(mngr_records, aws_groups)
-    print('Merged: {0}'.format(merged))
-    marshalled = marshall_records(merged)
-    return marshalled
-    #json.dumps(marshalled, sort_keys=True, indent=4, separators=(',', ': '))
+        print('POST rules to group {0}, data: {1}'.format(group_id, post_body))
 
-    # return json.dumps(groups)
+        mngr = mngr_api.Api(REGION)
+        sg_group = mngr.get_security_groups(group_ids=[group_id])[0]
 
+        for curr in post_body:
 
-@app.route('/testMerge')
-def test_route():
-    with open('example-security-group.txt', 'r') as stub_group:
-        stub_data = json.load(stub_group)
-    aws_groups = stub_data['SecurityGroups']
+            # TODO: validate cidr here or let Amazon handle that?
+            cidr_str = curr['cidr']
 
-    merged = merge_records(mngr_sgs, aws_groups)
+            try:
+                cidrs = mngr.get_registered_cidrs(cidr_str=cidr)[0]
+            except IndexError:
+                description = curr['description']
+                owner = curr.get('owner')
+                location = curr.get('location')
+                cidr = registeredCidr.RegisteredCidr(
+                    cidr=cidr_str, description=description, owner=owner,
+                    location=location, expiration=RegisteredCidr.DO_NOT_EXPIRE)
 
-    assert(len(merged) == 0)
-    sg = merged[0]
-    assert(sg['GroupId'] == 'sg-ebe1ac8f')
+            # Persist to store
+            mngr.post_registered_cidr(cidr)
+
+            protocol = curr.get('protocol', ALL_PROTOCOLS)
+            from_port = curr['from_port']
+            to_port = curr['to_port']
+            expiration = curr.get('expiration', DO_NOT_EXPIRE)
+
+            ingress_rule = awsSecurityGroup.IngressRule(
+                protocol, from_port, to_port, cidr)
+
+            mngr.authorize_ingress(sg_group, ingress_rule)
+
+        cidrs = query_registered_cidrs()
+        data = Marshaller.merge_records(cidrs, aws_groups)
+
+        return data
 
 
 @app.route('/testBoto')
@@ -201,7 +201,7 @@ def test_boto():
 
     # client.authorize_security_group_egress(self, *args, **kwargs)
 
+initialize_app()
 
 if __name__ == '__main__':
-    initialize_app()
     app.run(debug=True)

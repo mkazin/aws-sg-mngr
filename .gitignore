@@ -66,3 +66,6 @@ target/
 .ipynb_checkpoints
 mongodb
 mongodb.conf
+
+# Temporary vi files
+*.swp
