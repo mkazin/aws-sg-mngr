@@ -20,7 +20,7 @@ from logging.handlers import RotatingFileHandler
 # TODO: remove when I'm no longer setting environment variable for testing
 import os
 
-CONFIG_FILE = 'aws_sg_mngr/config/boto.cfg'
+CONFIG_FILE = 'config/boto.cfg'
 REGION = 'us-east-1'
 
 app = Flask(__name__)

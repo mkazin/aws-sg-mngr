@@ -8,7 +8,7 @@ class SqliteStore(CidrStore):
 
     def __init__(self, config, logger=None):
         # TODO: how does this file be packaged?
-        self.CREATE_SCHEMA_FILE = 'aws_sg_mngr/config/cidrs_schema.sql'
+        self.CREATE_SCHEMA_FILE = 'config/cidrs_schema.sql'
         self.db_filename = config.get('DB', 'path')
         # self.schema_file = config.get('DB', 'schema_path')
         self.db_conn = None
