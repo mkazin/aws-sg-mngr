@@ -69,3 +69,7 @@ mongodb.conf
 
 # Temporary vi files
 *.swp
+
+# Configuration file
+config/*.cfg
+

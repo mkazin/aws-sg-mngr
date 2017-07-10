@@ -20,7 +20,13 @@ from logging.handlers import RotatingFileHandler
 # TODO: remove when I'm no longer setting environment variable for testing
 import os
 
-CONFIG_FILE = 'aws_sg_mngr/config/boto.cfg'
+
+# TODO: remove this hack. See the Flaskr example which uses a factory
+#       to create the application
+CONFIG_FILE = 'config/boto.cfg'
+if not os.path.exists(CONFIG_FILE):
+    CONFIG_FILE = 'tests/test_server.cfg'
+
 REGION = 'us-east-1'
 
 app = Flask(__name__)
