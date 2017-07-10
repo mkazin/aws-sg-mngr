@@ -35,7 +35,8 @@ class ServerTests(unittest.TestCase):
         # self.app.client = stubber  # MockClient()
 
         if self.TEST_GROUP_ID is None:
-            client = boto3.client('ec2', aws_access_key_id='test_key',
+            client = boto3.client('ec2', 'us-east-1',
+                                  aws_access_key_id='test_key',
                                   aws_secret_access_key='test_secret')
             response = client.create_security_group(
                 GroupName=ServerTests.TEST_GROUP_NAME,
