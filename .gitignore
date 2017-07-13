@@ -9,7 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-env[23?]/
+[v?]env[23?]/
 build/
 develop-eggs/
 dist/
@@ -72,4 +72,3 @@ mongodb.conf
 
 # Configuration file
 config/*.cfg
-

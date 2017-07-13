@@ -13,7 +13,7 @@ What does that mean?
 Basically, the goal is to provide a human-centric API, rather than assume a DevOps guru
 is managing security groups using a custom-built configuration-as-code system.
 
-## Goals 
+## Goals
 Among other things, it aims to:
 - Treat SG like a list of firewall rules (the only nesting is [SG] contains [Rules])
 - Get rid of AWS' excessive nesting (e.g. a nested "IpRanges" list within "IpPermissionsEgress")
@@ -30,7 +30,7 @@ A quick note on project scope.
 This project is intended to provide an API, as a replacement for AWS' API.
 
 Things that are not expected to be included here:
-- Clients! There are no plans to include web, mobile, or integrations (Slack, IFTTT, etc.) in this project. Those belong in separate GitHub projects, hopefully led by other maintainers who will do them justice. 
+- Clients! There are no plans to include web, mobile, or integrations (Slack, IFTTT, etc.) in this project. Those belong in separate GitHub projects, hopefully led by other maintainers who will do them justice.
 - Servers! Due to security needs (i.e. your AWS secret keys) a server of some sort will need to be deployed by users. That's entirely on you, with one minor exception- I will be providing the basic server implementation I will be using myself. It may not satisfy your needs, and will not be the focus of this project, but rather it will provide a reference implementation.
 
 That being said,
