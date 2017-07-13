@@ -1,6 +1,14 @@
-pytest
+# AWS Mocking information
 #mock
 moto
 
-# Used to generate Swagger API documentation
+# Python Testing
+pytest
+pytest-cov
+
+# External Build Tools
+coverage>=4.0,<4.4
+codeclimate-test-reporter==0.2.3
+
+# Swagger API Documentation
 flask-restful-swagger

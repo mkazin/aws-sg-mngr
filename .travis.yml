@@ -1,23 +1,14 @@
 language: python
 python:
   - "2.7"
-#  - "3.2"
-#  - "3.3"
-#  - "3.4"
-#  - "3.5"
-#  - "3.5-dev"
   - "3.6"
-#  - "3.6-dev"
   - "nightly"
 install:
   - "pip install -r requirements.txt -r requirements-dev.txt"
-  # coverage version held back due to warning: "This reporter is compatible with Coverage.py versions >=4.0,<4.4."
-  - "pip install coverage==4.3 pytest-cov codeclimate-test-reporter"
+  - "pip install coverage==4.3"
   - "pip install codecov"
-  - "pip install pytest-cov"
-script: 
+script:
   - "py.test --cov=aws_sg_mngr tests"
+  - "codeclimate-test-reporter"
 after_sucess:
-  - codeclimate-test-reporter --token $CODECLIMATE_REPO_TOKEN
-  - codecov --token=$CODECOV_TOKEN
-
+  - "codecov --token=$CODECOV_TOKEN"
