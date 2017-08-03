@@ -7,6 +7,18 @@ class IpRule(object):
         self.protocol = protocol
         self.cidr = cidr
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
+
+    def __hash__(self):
+        return hash(tuple(sorted(self.__dict__.items())))
 
 class EgressRule(IpRule):
 
@@ -16,6 +28,13 @@ class EgressRule(IpRule):
     def __str__(self):
         return '{{"Protocol": "{0}", "CIDR": "{1}"}}' \
             .format(self.protocol, self.cidr)
+
+    def matches(self, other):
+        if self.protocol != other.protocol:
+            return False
+        if self.cidr != other.cidr:
+            return False
+        return True
 
 
 class IngressRule(IpRule):
@@ -29,11 +48,27 @@ class IngressRule(IpRule):
         return '{{"Protocol": "{0}", "CIDR": "{1}", "FromPort": {2}, "ToPort": {3}}}' \
             .format(self.protocol, self.cidr, self.from_port, self.to_port)
 
+    # def matches(self, other):
 
-class AwsSecurityGroups(object):
+    #     if not isinstance(other, self.__class__):
+    #         return False
+    #     # TODO: how is this supposed to be done in python???
+    #     if not IpRule.matches(self, other):
+    #         return False
 
-    def __init__(self, groups):
-        self.groups = groups
+    #     if self.from_port != other.from_port:
+    #         return False
+    #     if self.to_port != other.to_port:
+    #         return False
+
+    #     return True
+
+
+class AwsSecurityGroups(list):
+
+    def __init__(self, *args, **kwargsgroups):
+        super(AwsSecurityGroups, self).__init__(args[0])
+        # self.groups = groups
 
     @staticmethod
     def from_boto(client, group_ids=None):
@@ -56,7 +91,7 @@ class AwsSecurityGroups(object):
         return AwsSecurityGroups(result)
 
     def __str__(self):
-        return '[ {0} ]'.format(' , '.join(str(x) for x in self.groups))
+        return '[ {0} ]'.format(' , '.join(str(x) for x in self))
 
 
 class AwsSecurityGroup(object):
@@ -221,6 +256,18 @@ class AwsSecurityGroup(object):
         result += ', "IngressRules": [{0}] '.format(__listjoin__(self.ingress_rules))
         result += ', "EgressRules": [{0}] '.format(__listjoin__(self.egress_rules))
         result += "}"
+        return result
+
+    def matches(self, other_group):
+        # other_cidr = other_cidr.decode('utf-8')
+
+        if isinstance(other_group, self.__class__):
+            result = self.group_id == other_group.group_id
+        else:
+            result = False
+
+        # print 'comparing {0} ({1}) to {2} ({3}):: {4}'.format(self.cidr,
+        # len(self.cidr), other_cidr, len(other_cidr), result)
         return result
 
 

@@ -16,18 +16,18 @@ class Marshaller(object):
         print('==========================================================')
         result = []
 
-        if type(aws_sgs) == list:
-            groups = aws_sgs
-        else:
-            groups = aws_sgs.groups
+        # if type(aws_sgs) == list:
+        #     groups = aws_sgs
+        # else:
+        #     groups = aws_sgs.groups
 
         print("Merging aws_sgs:")
-        print('\n'.join('\t- {0}'.format(str(x)) for x in groups))
+        print('\n'.join('\t- {0}'.format(str(x)) for x in aws_sgs))
 
         print("With mngr_sgs:")
         print('\n'.join('\t- {0}'.format(str(x)) for x in mngr_sgs))
 
-        for aws_group in groups:
+        for aws_group in aws_sgs:
             print('==========================================================')
             print('\n\t\t- Current aws_group: {0}'.format(aws_group))
 
