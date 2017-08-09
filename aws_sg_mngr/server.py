@@ -103,6 +103,8 @@ class SecurityGroup(Resource):
 
     def get(self, group_id):
 
+        print('GET groups with group_id')
+
         parts = group_id.split('-')
         assert parts[0] == 'sg'
 
@@ -128,6 +130,9 @@ class SecurityGroupRule(Resource):
 
     @api.response(201, 'Rule successfully created.')
     def post(self):
+        print('POST CIDR')
+
+        # TODO: this is confused. Should be a CIDR, not rule?
         """Creates a new blog category."""
         mngr = mngr_api.Api(REGION)
         mngr.create_rule(request.json)
@@ -137,7 +142,24 @@ class SecurityGroupRule(Resource):
 @api.route('/api/rules/<string:group_id>')
 class SecurityGroupRule(Resource):
 
+    def get(self, group_id):
+        print('Get rules for group_id')
+        mngr = mngr_api.Api(REGION)
+        aws_groups = mngr.get_security_groups(group_ids=[group_id])
+
+        cidrs = query_registered_cidrs()
+        data = Marshaller.merge_records(cidrs, aws_groups)
+
+        return data
+
+
+    # TODO: implement. Possibly replace with marshmallow due to deprecation?
+    def put(self, group_id):
+        print('PUT? rule with group_id: {}'.format(group_id))
+
+
     def post(self, group_id):
+        print('POST? rule with group_id: {}'.format(group_id))
 
         parts = group_id.split('-')
         assert parts[0] == 'sg'
@@ -185,6 +207,8 @@ class SecurityGroupRule(Resource):
 
 @app.route('/testBoto')
 def test_boto():
+
+    print('testBoto')
 
     os.environ['BOTO_CONFIG'] = CONFIG_FILE
 
