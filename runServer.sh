@@ -1,3 +1,3 @@
 BOTO_CONFIG=server/config/boto.cfg
-FLASK_APP=server/server.py
+export FLASK_APP=aws_sg_mngr/server.py
 flask run

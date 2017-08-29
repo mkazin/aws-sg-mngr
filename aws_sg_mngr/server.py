@@ -78,21 +78,21 @@ def initialize_db():
 class SecurityGroupsCollection(Resource):
 
     def get(self):
-        print('GET groups')
+        app.logger.debug('GET groups')
         mngr = mngr_api.Api(REGION)
         aws_groups = mngr.get_security_groups()
 
-        print(aws_groups)
+        app.logger.debug(aws_groups)
         cidrs = query_registered_cidrs()  # TODO: replace with persistence
         data = Marshaller.merge_records(cidrs, aws_groups)
 
         return data
 
         # NOTE: disabling marshalling
-        # print('******* OUTPUT ************')
-        # print('data: {0}'.format(data))
+        # app.logger.debug('******* OUTPUT ************')
+        # app.logger.debug('data: {0}'.format(data))
         # result = Marshaller._marshall_records_(data)
-        # print('Result: ', result)
+        # app.logger.debug('Result: {}'.format(, result))
         # return result
 
 
@@ -103,12 +103,11 @@ class SecurityGroup(Resource):
 
     def get(self, group_id):
 
-        print('GET groups with group_id')
+        app.logger.debug('GET group with {0}'.format(group_id))
 
         parts = group_id.split('-')
         assert parts[0] == 'sg'
 
-        print('GET group {0}'.format(group_id))
         mngr = mngr_api.Api(REGION)
         aws_groups = mngr.get_security_groups(group_ids=[group_id])
 
@@ -130,7 +129,7 @@ class SecurityGroupRule(Resource):
 
     @api.response(201, 'Rule successfully created.')
     def post(self):
-        print('POST CIDR')
+        app.logger.debug('POST CIDR')
 
         # TODO: this is confused. Should be a CIDR, not rule?
         """Creates a new blog category."""
@@ -143,7 +142,7 @@ class SecurityGroupRule(Resource):
 class SecurityGroupRule(Resource):
 
     def get(self, group_id):
-        print('Get rules for group_id')
+        app.logger.debug('Get rules for group_id')
         mngr = mngr_api.Api(REGION)
         aws_groups = mngr.get_security_groups(group_ids=[group_id])
 
@@ -154,19 +153,31 @@ class SecurityGroupRule(Resource):
 
 
     # TODO: implement. Possibly replace with marshmallow due to deprecation?
+    @api.response(201, 'Rule successfully updated.')
     def put(self, group_id):
-        print('PUT? rule with group_id: {}'.format(group_id))
+        app.logger.debug('PUT? rule with group_id: {}'.format(group_id))
 
 
+
+    @api.response(201, 'Rule successfully created.')
     def post(self, group_id):
-        print('POST? rule with group_id: {}'.format(group_id))
-
+        app.logger.debug('POST? rule with group_id: {}'.format(group_id))
         parts = group_id.split('-')
         assert parts[0] == 'sg'
+        # help(self)
+        # help(api)
+        # Nope: request is not defined - print("request.__dict__:", request.__dict__)
+        # Nope: request is not defined - print("request.form['data']:", request.form['data']
+        app.logger.debug("group_id: {}".format(group_id))
+        app.logger.debug("self.__dict__: {}".format(self.__dict__))
+        app.logger.debug("api.payload: {}".format(api.payload))
+        app.logger.debug("self.api.payload: {}".format(self.api.payload))
+        app.logger.debug("api.__dict: {}".format(api.__dict__))
+        app.logger.debug("app.__dict: {}".format(app.__dict__))
+        app.logger.debug("self.api.__dict: {}".format(self.api.__dict__))
+        post_body = self.api.payload # json.loads(request.data)
 
-        post_body = json.loads(request.data)
-
-        print('POST rules to group {0}, data: {1}'.format(group_id, post_body))
+        app.logger.debug('POST rules to group {0}, data: {1}'.format(group_id, post_body))
 
         mngr = mngr_api.Api(REGION)
         sg_group = mngr.get_security_groups(group_ids=[group_id])[0]
@@ -208,7 +219,7 @@ class SecurityGroupRule(Resource):
 @app.route('/testBoto')
 def test_boto():
 
-    print('testBoto')
+    app.logger.debug('testBoto')
 
     os.environ['BOTO_CONFIG'] = CONFIG_FILE
 
@@ -219,12 +230,12 @@ def test_boto():
 
     # response = client.describe_security_groups()
 
-    print(groups)
+    app.logger.debug(groups)
     return str(groups)
 
     # if response['ResponseMetadata']['HTTPStatusCode'] != 200:
-    #     print 'Error getting SecurityGroup data from AWS:',
-    #     print response['ResponseMetadata']
+    #     app.logger.error('Error getting SecurityGroup data from AWS:')
+    #     app.logger.error(response['ResponseMetadata'])
     #     return
 
     # response['SecurityGroups']

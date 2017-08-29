@@ -94,7 +94,8 @@ class ServerTests(unittest.TestCase):
 
 
         # Create a new rule for this group by POSTING while passing a body
-        response = self.client.post('/api/rules/{0}'.format(self.TEST_GROUP_ID))
+        # help(self.client)
+        response = self.client.post('/api/rules/{0}'.format(self.TEST_GROUP_ID), data='{"hello":"world"}')
         assert response.status_code == 200
 
 
